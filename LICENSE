@@ -1,0 +1,132 @@
+b）查询选修张铁林老师的课程的同学学号和姓名（5’）
+select register_no,s_name
+from db_studentljk110
+where register_no in(
+  select register_no
+  from db_gradeljk110
+  where work_id=(
+    select work_id
+    from db_teacherljk110
+	where T_name='刘文鹏'));
+c）查询学生信息表中，年龄最大的两位同学的信息（5’）
+select * from db_studentljk110 order by s_dateofbirth DESC limit 1,2;
+d）查询成绩信息表的平均分最低同学的学号、姓名和平均分数（6’）
+
+
+select db_studentljk110.register_no,db_studentljk110.s_name,db_gradeljk110.course_no,db_gradeljk110.final_grade from db_studentljk110,db_gradeljk110 where major_no=(select major_no from db_majorljk110 where major_name='物联');
+
+
+create or replace view xscjljk110.cs_kc
+  as 
+  select db_studentljk110.register_no,db_studentljk110.s_name,db_gradeljk110.course_no,db_gradeljk110.final_grade from db_studentljk110,db_gradeljk110 where major_no=(select major_no from db_majorljk110 where major_name='物联');
+
+  
+  
+select S_name,avg(final_grade)
+from xscjljk110.cs_kc
+where final_grade>80
+group by register_no;
+
+delimiter $$
+create procedure pandua(in aintnum float(3),out jieguo char(2))
+begin
+  if round(aintnum/2)=aintnum/2 then
+  set jieguo='偶数';
+  else 
+  set jieguo='奇数';
+  end if;
+end $$
+delimiter ;
+
+
+
+create user 'stu'@'localhost'identified by'stu123';
+grant select
+    on db_studentljk110
+	to stu@localhost;
+grant select(db_studentljk110);
+
+
+mysql -h localhost -u stu -p
+
+select final_grade
+from db_gradeljk110
+where register_no=2016132110 and course_no=31;
+  
+update db_gradeljk110
+  set final_grade='100'
+  where register_no=2016132110 and course_no=31;
+
+7.  共10分
+a） 向教学任务信息表中插入1条本学期课程信息（2’）
+insert into db_courseljk110 values('31', '11', '1', '高等数学', '4', '30', '10', '2', '基础课', '闭卷', '1')
+
+
+insert into db_teach_courseljk110 values(‘37’,’24’,’lalala’,’201826’,’’,’’)
+# course_no, major_no, year_no, course_name, credit, planned_hour, lab_hour, week_hour, course_type, exam_type, remarks
+31, 11, 1, 高等数学, 4, 30, 10, 2, 基础课, 闭卷, 1
+
+b） 向成绩信息表中插入上述课程的成绩信息（2’）
+insert into db_gradeljk110 values('2016132114', '35', 'C++', '24', '1998-05-08', '2', '1', '99', '1', '1');
+c） 为成绩信息表增加一个字段，等级分，根据最终成绩修改填入对应的等级分（优：最终成绩 >= 90，良：90 <= 最终成绩 < 75，中：75 <= 最终成绩 < 60，差：最终成绩 < 60）,然后删除最终成绩这个字段，查询并显示最终结果（6’）
+alter table db_gradeljk110
+  add levell char(3) null
+
+
+
+  drop column final_grade;
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+alter table db_gradeljk110
+add 150fen int(10) null
+
+
+
+  drop column final_grade;
+
+  
+  
+  
+  
+  
+  
+  
+  
+  8.  共8分
+a） 用任意一种方式备份教学任务信息表（db_teach__course）到文件backup（4’）
+b） 创建db_teach__course_new（2’）
+c） 将backup文件恢复到db_grade_new（2’）
+load data infile 'backup.txt'
+  into table db_teach_courseljk110;
+
+select * from db_teach_course_newljk110 into outfile 'backup.txt';
+
+
+show create table db_gradeljk110;
+
+
+CREATE TABLE `db_grade_newljk110` (
+  'register_no' char(12) NOT NULL,
+  'course_no' varchar(9) NOT NULL,
+  'course_name' varchar(20) DEFAULT NULL,
+  'work_id' char(6) NOT NULL,
+  'registered_date' date DEFAULT NULL,
+  'registered_year' char(9) DEFAULT NULL,
+  'registered_term' char(1) DEFAULT NULL,
+  'final_grade' int(6) DEFAULT NULL,
+  'makeup_flag' char(1) DEFAULT NULL,
+  'credit' int(4) DEFAULT NULL;
